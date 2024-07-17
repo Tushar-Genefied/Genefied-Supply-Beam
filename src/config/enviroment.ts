@@ -28,4 +28,5 @@ export const serverConfig = {
 	db_host:process.env.DB_HOST,
 	db_database:process.env.DB_DATABASE,
 	db_password:process.env.DB_PASSWORD,
+	access_token_secrect:process.env.ACCESS_TOKEN_SECRECT,
 };
