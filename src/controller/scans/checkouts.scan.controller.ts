@@ -1,5 +1,3 @@
-import CheckoutQrs from "../../models/checkoutQrs.model";
-import Checkout from "../../models/checkouts.model";
 import QrLocations from "../../models/qrLocations.model";
 import { getConnectionBySlug } from "../../utils/connectionManager";
 import { qrStatusObject } from "../../utils/helper";
