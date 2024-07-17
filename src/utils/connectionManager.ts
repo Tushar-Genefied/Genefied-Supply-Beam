@@ -36,7 +36,7 @@ export async function connectAllDb() {
 			return Object.assign({}, prev, next);
 		}, {});
 
-	console.log("connectionMap1" , connectionMap);	
+	console.log("All DB connected !!!");
 }
 
 

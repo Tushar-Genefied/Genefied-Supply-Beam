@@ -6,18 +6,20 @@ export async function up(knex: Knex): Promise<void> {
 		table.increments("id").primary(); // Primary key
 		table.integer("batch_id").notNullable(); // Checkin Id/Checkout Id
         table.string("batch_type").notNullable(); // Checkin Id/Checkout Id
-		table.integer("qr_id").notNullable(); // QR ID
-		table.integer("pqr_id").notNullable().defaultTo(0); // parent qr ID
-		table.integer("cqr_id").notNullable().defaultTo(0); // child qr ID
+		table.integer("qr_id")
+		table.integer("pqr_id")
+		table.integer("cqr_id")
 		table.string("qr_type").notNullable().defaultTo(1); // QR Type
         table.integer("location_id").notNullable(); // Adds a non-nullable integer column for location ID
 		table.integer("user_role_id").notNullable(); // Adds a non-nullable integer column for user role ID
+		table.integer("user_id").notNullable();
+		table.string("user_name", 100).notNullable();
+		table.string("picklist_no", 50);
+		table.string("order_no", 50);
+		table.string("invoice_no", 50);
 		table.timestamp("created_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
-		table.integer("created_by_id").notNullable();
-		table.string("created_by_name", 255).notNullable();
 		table.timestamp("updated_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
-		table.integer("updated_by_id");
-		table.string("updated_by_name", 255);
+
 	});
 }
 

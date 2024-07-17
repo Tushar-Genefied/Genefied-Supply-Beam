@@ -1,4 +1,5 @@
 import type { Knex } from "knex";
+import { serverConfig } from "../config/enviroment";
 
 if (process.argv[5] === "prod") {
 	require("dotenv").config({
@@ -25,9 +26,15 @@ const config: { [key: string]: Knex.Config } = {
 	development: {
 		client: "postgresql",
 		connection: {
+			// host:  process.env.SERVER_HOST,
+			// // database: "saas",
+			// database: "tenant23",
+			// user: process.env.DB_USER,
+			// password: process.env.DB_PASSWORD,
+
 			host:  "65.2.101.243",
 			// database: "saas",
-			database: "tenant7",
+			database: "tenant23",
 			// user: process.env.DB_USER,
 			// password: process.env.DB_PASSWORD,
 			user: "postgres",
@@ -38,9 +45,8 @@ const config: { [key: string]: Knex.Config } = {
 			max: 1000
 		},
 		migrations: {
-			tableName: "knex_migrations",
-			// directory: __dirname + "/migrations/admin"
-			directory: __dirname + "/migrations/tenant"
+			tableName: "knex_migrations_supply_beam",
+			directory: __dirname + "/migrations"
 		}
 	},
 
