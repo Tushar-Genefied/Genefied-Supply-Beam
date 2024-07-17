@@ -33,4 +33,14 @@ CheckoutQrs.create = async (knexConnection: any, newCheckoutQrs: checkoutQrsType
 	}
 };
 
+CheckoutQrs.getByQrId = async (knexConnection: any, id: number, result: any) => {
+	try {
+		const res: any = await knexConnection("supply_beam_checkout_qrs").where({ "qr_id": id });
+		result(false, res);
+	} catch (error) {
+		console.error("Error at Get CheckoutQrs by Id in model ", error);
+		result(true, error);
+	}
+};
+
 export default CheckoutQrs;

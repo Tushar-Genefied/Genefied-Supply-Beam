@@ -20,3 +20,10 @@ export const getToken = function (data: any) {
 	const token_secret = serverConfig.access_token_secrect;
 	return jwt.sign(data, token_secret);
 };
+
+export const qrStatusObject : any= {
+    '1' : 'qr_id',
+    '2' : 'pqr_id',
+    '3' : 'cqr_id'
+
+}
