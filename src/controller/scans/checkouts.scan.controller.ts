@@ -36,16 +36,16 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
                         
                         // last location should matched with current location
                         if(  lastLocationsData[0].location_id != currentLocationId  ){
-                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", lastLocationsData, res);
+                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", qrDetails, res);
                         }
                     }else{
                          // for user type like distributor or retailer user id should match
                         if(  lastLocationsData[0].user_id != userId  ){
-                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", lastLocationsData, res);
+                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", qrDetails, res);
                         }
                     }
 
-                    return await sendResponse(true, 200, "qr has been verified and ready to checkout ", lastLocationsData, res);
+                    return await sendResponse(true, 200, "qr has been verified and ready to checkout ", qrDetails, res);
 
 				}
 			});
