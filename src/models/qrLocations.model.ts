@@ -1,4 +1,4 @@
-import { dbNames } from "../config/tableName";
+import { TableNames } from "../config/tableName";
 
 type qrLocationType = {
     batch_id: number;
@@ -32,7 +32,7 @@ QrLocations.create = async (knexConnection: any, newQrLocations: qrLocationType,
 	try {
 		const res = await knexConnection
 			.insert(newQrLocations)
-			.into(dbNames.qrLocations)
+			.into(TableNames.qrLocations)
 			.returning("id");
 		result(false, { ...newQrLocations, id: res[0].id });
 	} catch (error) {
@@ -43,7 +43,7 @@ QrLocations.create = async (knexConnection: any, newQrLocations: qrLocationType,
 
 QrLocations.lastLocations = async (knexConnection: any, whereLastLocation : any, result: any) => {
 	try {
-		const res = await knexConnection.select("*").from(dbNames.qrLocations).where(whereLastLocation).orderBy("created_at","desc").limit(1);
+		const res = await knexConnection.select("*").from(TableNames.qrLocations).where(whereLastLocation).orderBy("created_at","desc").limit(1);
 
 		result(false,res);
 	} catch (error) {

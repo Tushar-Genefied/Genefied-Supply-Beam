@@ -1,4 +1,4 @@
-import { dbNames } from "../config/tableName";
+import { TableNames } from "../config/tableName";
 
 type checkinType = {
     location_id: number;
@@ -33,7 +33,7 @@ Checkin.create = async (knexConnection: any, newCheckin: checkinType, result: an
 	try {
 		const res = await knexConnection
 			.insert(newCheckin)
-			.into(dbNames.checkIns)
+			.into(TableNames.checkIns)
 			.returning("id");
 		result(false, { ...newCheckin, id: res[0].id });
 	} catch (error) {

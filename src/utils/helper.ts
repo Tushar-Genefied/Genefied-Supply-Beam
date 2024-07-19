@@ -27,3 +27,9 @@ export const qrStatusObject : any= {
     '3' : 'cqr_id'
 
 }
+
+export const trackingTypesObject : any= {
+    '1' : 'IN',
+    '2' : 'OUT',
+    '3' : 'RETURN'
+}

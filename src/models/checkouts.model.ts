@@ -1,4 +1,4 @@
-import { dbNames } from "../config/tableName";
+import { TableNames } from "../config/tableName";
 
 type checkoutType = {
     location_id: number;
@@ -31,32 +31,7 @@ Checkout.create = async (knexConnection: any, newCheckout: checkoutType, result:
 	try {
 		const res = await knexConnection
 			.insert(newCheckout)
-			.into(dbNames.checkouts)
-			.returning("id");
-		result(false, { ...newCheckout, id: res[0].id });
-	} catch (error) {
-		console.error("Error at Add Checkout in model ", error);
-		result(true, error);
-	}
-};
-
-Checkout.create = async (knexConnection: any, newCheckout: checkoutType, result: any) => {
-	try {
-		const res = await knexConnection
-			.insert(newCheckout)
-			.into(dbNames.checkouts)
-			.returning("id");
-		result(false, { ...newCheckout, id: res[0].id });
-	} catch (error) {
-		console.error("Error at Add Checkout in model ", error);
-		result(true, error);
-	}
-};
-Checkout.createTracking = async (knexConnection: any, newCheckout: checkoutType, result: any) => {
-	try {
-		const res = await knexConnection
-			.insert(newCheckout)
-			.into(dbNames.checkouts)
+			.into(TableNames.checkouts)
 			.returning("id");
 		result(false, { ...newCheckout, id: res[0].id });
 	} catch (error) {

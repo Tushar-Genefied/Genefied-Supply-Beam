@@ -1,4 +1,4 @@
-import { dbNames } from "../config/tableName";
+import { TableNames } from "../config/tableName";
 
 type checkoutQrsType = {
     batch_id: number;
@@ -24,7 +24,7 @@ CheckoutQrs.create = async (knexConnection: any, newCheckoutQrs: checkoutQrsType
 	try {
 		const res = await knexConnection
 			.insert(newCheckoutQrs)
-			.into(dbNames.checkoutQrs)
+			.into(TableNames.checkoutQrs)
 			.returning("id");
 		result(false, { ...newCheckoutQrs, id: res[0].id });
 	} catch (error) {
