@@ -1,8 +1,8 @@
 import { Knex } from "knex";
-import { dbNames } from "../../config/tableName";
+import { TableNames } from "../../config/tableName";
 
 export async function up(knex: Knex): Promise<void> {
-	await knex.schema.createTable(dbNames.checkIns, (table) => {
+	await knex.schema.createTable(TableNames.checkIns, (table) => {
 		table.increments("id").primary(); // Adds an auto-incrementing primary key column
 		table.integer("location_id").notNullable(); // Adds a non-nullable integer column for location ID
 		table.integer("user_role_id").notNullable(); // Adds a non-nullable integer column for user role ID
@@ -21,5 +21,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-	return await knex.schema.dropTable(dbNames.checkIns);
+	return await knex.schema.dropTable(TableNames.checkIns);
 }

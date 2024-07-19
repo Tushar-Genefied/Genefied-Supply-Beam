@@ -1,4 +1,4 @@
-import { dbNames } from "../config/tableName";
+import { TableNames } from "../config/tableName";
 
 type SupplyBeamSiteLocationsType = {
 	location: string,
@@ -32,7 +32,7 @@ SupplyBeamSiteLocations.findById = async (knexConnection: any, location_id: any,
     try {
       const res: any = await knexConnection
         .select()
-        .from(dbNames.supplyBeamLocations)
+        .from(TableNames.supplyBeamLocations)
         .where("supply_beam_locations.id", location_id);
   
       result(false, res[0]);
@@ -45,11 +45,11 @@ SupplyBeamSiteLocations.findById = async (knexConnection: any, location_id: any,
 
 SupplyBeamSiteLocations.getAllSupplyBeamSiteLocations = async (knexConnection:any, filters :any, result: any) => {
 	try {
-		let query = knexConnection.select("*").from(dbNames.supplyBeamLocations).where({
+		let query = knexConnection.select("*").from(TableNames.supplyBeamLocations).where({
 			status: "1"
 	  });
   
-	  let countQuery = knexConnection.count("* as total_users").from(dbNames.supplyBeamLocations).where({
+	  let countQuery = knexConnection.count("* as total_users").from(TableNames.supplyBeamLocations).where({
 			status: "1"
 	  });
   

@@ -1,8 +1,8 @@
 import { Knex } from "knex";
-import { dbNames } from "../../config/tableName";
+import { TableNames } from "../../config/tableName";
 
 export async function up(knex: Knex): Promise<void> {
-	await knex.schema.createTable(dbNames.checkInQrs, (table) => {
+	await knex.schema.createTable(TableNames.checkInQrs, (table) => {
 		table.increments("id").primary(); // Primary key
 		table.integer("batch_id").notNullable(); // Checkin Id
 		table.integer("qr_id").notNullable(); // QR ID
@@ -17,5 +17,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-	await knex.schema.dropTableIfExists(dbNames.checkInQrs);
+	await knex.schema.dropTableIfExists(TableNames.checkInQrs);
 }
