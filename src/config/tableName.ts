@@ -4,4 +4,5 @@ export const dbNames = {
 	checkoutQrs :"checkout_qrs",
 	checkInQrs :"checkin_qrs",
 	qrLocations :"qr_locations",
+	supplyBeamLocations:"supply_beam_locations",
 };

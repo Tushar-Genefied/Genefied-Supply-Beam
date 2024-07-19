@@ -17,7 +17,7 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
         const {id : userId , name : userName , location_id : currentLocationId } = req.user;
         let whereLastLocation :any = {};
 
-        whereLastLocation[qrStatusObject[qrType]];
+        whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
 
 			// last location
 			return await QrLocations.lastLocations(tenantKnexConnection, whereLastLocation, async (lastLocationsError: Error, lastLocationsData: any) => {
