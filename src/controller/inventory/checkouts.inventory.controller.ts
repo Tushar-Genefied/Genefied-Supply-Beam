@@ -26,6 +26,8 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 			return await sendResponse(false, 409, "No Such Qr Code Exists ", null, res);
 		}
 		let getOutcodeAndOutcodetypeRes=[];
+		// location id != zero then scan is done by supply users , outcode is location_code
+		// location id == zero then scan is done by app users , outcode is app_user_id 
 		if( locationId != 0){
 			
 			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));

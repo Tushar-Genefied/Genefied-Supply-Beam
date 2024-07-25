@@ -17,16 +17,19 @@ const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , ext
             const x = qrtypeList[i];
             qrcodeIdTypeMap[x.id] = x.qr_type;
         }   
-		const qrcodeDataList = await knexConnection.select("id as qr_id " , "pqr_id" , "qr_type").from(TableNames.qr).whereIn("id",parentAndChildQrs).whereIn("pqr_id",parentAndChildQrs);
+		const qrcodeDataList = await knexConnection.select("id as qr_id " , "pqr_id" , "qr_type" ).from(TableNames.qr).whereIn("id",parentAndChildQrs).whereIn("pqr_id",parentAndChildQrs);
 
         let finalQrData : any = [];
         for( let i=0 ;i < qrcodeDataList.length ;i++ ){
             const x = qrcodeDataList[i];
 
             // if qrcodeIdTypeMap has qr_id and qr_type == 1 then it is a child
+            // it mean child scanned
             if( qrcodeIdTypeMap.hasOwnProperty(x.qr_id)  && qrcodeIdTypeMap[x.qr_id] == '1' ){
                 finalQrData.push({
                     qr_id : x.qr_id,
+                    pqr_id : x.pqr_id,
+                    cqr_id : x.cqr_id,
                     qr_type : x.qr_type,
                     user_id : extraData.user_id,
                     user_name : extraData.user_name,
@@ -39,7 +42,8 @@ const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , ext
                 finalQrData.push({
                     qr_id : x.qr_id,
                     pqr_id : x.pqr_id,
-                    qr_type : x.qr_type,
+                    cqr_id : x.cqr_id,
+                    qr_type : "2",
                     user_id : extraData.user_id,
                     user_name : extraData.user_name,
                     batch_id : extraData.batch_id
@@ -60,17 +64,16 @@ const createTrackingQrData =  async (knexConnection: any, cartonQrs : number[] |
         let finalParentAndChildQrs = [];
         // if cartonQrs are present , then we need retrive its child qrs , ( carton --> parent --> child ) means parent 
 
-        let cartonParentQrs = [];
+        let cartonParentQrs : any = {};
 
         if( cartonQrs.length  > 0 ){
             const res = await knexConnection.select("id" , "pqr_id" ).from(TableNames.qr).whereIn("pqr_id",cartonQrs).where("qr_type",'2');
 
 
-
-            cartonParentQrs = res;
-
             if( res.length > 0 ){
                 for( let i = 0 ;i<res.length ;i++ ){
+
+                    cartonParentQrs[res[i].id]=res[i].pqr_id;
                     finalParentAndChildQrs.push(res[i].id);
                 }
             }
@@ -85,19 +88,18 @@ const createTrackingQrData =  async (knexConnection: any, cartonQrs : number[] |
         let getQrTrackInfoResp = await getQrTrackInfo(knexConnection ,finalParentAndChildQrs ,  extraData );
 
         // if cartonParentQrs.length > 0 , then there are some parent whose are
-        // child of these carton qrs 
+        // child of these carton qrs , it means cartons is scanned
 
-        for( let i =0 ;i<cartonParentQrs.length ;i++ ){
-            const x = cartonParentQrs[i];
+        
             for( let j = 0 ;j<getQrTrackInfoResp.length ;j++ ){
                 const y = getQrTrackInfoResp[j];
 
-                // x.pqr_id is carton id and  y.pqr_id is parent id 
-                if( x.pqr_id == y.pqr_id){
-                    getQrTrackInfoResp[j]['cqr_id'] = x.pqr_id;
+                // carton is scanned 
+                if( cartonParentQrs[y.cqr_id] == y.pqr_id){
+                    getQrTrackInfoResp[j]['qr_type'] = '3';
                 }
             }
-        }
+        
 
         return getQrTrackInfoResp;
 	} catch (error) {
