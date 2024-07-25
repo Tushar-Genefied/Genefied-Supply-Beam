@@ -23,11 +23,10 @@ const Checkout = function (this: checkoutType, checkoutData: checkoutType) {
 	this.remarks = checkoutData.remarks;
 	this.out_code = checkoutData.out_code;
 	this.out_user_type = checkoutData.out_user_type;
-	this.status = checkoutData.status;
 
 };
 
-Checkout.create = async (knexConnection: any, newCheckout: checkoutType, result: any) => {
+Checkout.create = async (knexConnection: any, newCheckout: any, result: any) => {
 	try {
 		const res = await knexConnection
 			.insert(newCheckout)
@@ -37,6 +36,13 @@ Checkout.create = async (knexConnection: any, newCheckout: checkoutType, result:
 	} catch (error) {
 		console.error("Error at Add Checkout in model ", error);
 		result(true, error);
+	}
+};
+Checkout.deleteCheckout = async (knexConnection: any, id: any ) => {
+	try {
+		const res = await knexConnection.from(TableNames.checkouts).del().where({ id });
+	} catch (error) {
+		console.error("Error at Add Checkout in model ", error);
 	}
 };
 

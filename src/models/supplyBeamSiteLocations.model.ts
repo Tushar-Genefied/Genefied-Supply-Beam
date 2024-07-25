@@ -79,5 +79,22 @@ SupplyBeamSiteLocations.getAllSupplyBeamSiteLocations = async (knexConnection:an
 	return;
 };
 
+SupplyBeamSiteLocations.getOutcodeAndOutcodetype = async (knexConnection: any, location_id: number) => {
+    try {
+      const res: any = await knexConnection
+        .select('location_code','location_type','location_type_id')
+        .from(TableNames.supplyBeamLocations)
+        .where("supply_beam_locations.id", location_id);
+
+		return res;
+     
+    } catch (error) {
+      console.error("Error in SupplyBeamSiteLocations.findById: ", error);
+	  return [];
+    }
+  };
+  
+
+
 
 export default SupplyBeamSiteLocations;

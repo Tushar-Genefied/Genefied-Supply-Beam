@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.string("picklist_no", 50);
 		table.string("order_no", 50);
 		table.string("invoice_no", 50);
-		table.string("ref").notNullable(); // Adds a non-nullable string column for reference
+		table.string("ref").unique().notNullable(); // Adds a non-nullable string column for reference
 		table.integer("total_count").notNullable(); // Adds a non-nullable integer column for total count
 		table.text("remarks"); // Adds a text column for remarks
 		table.string("status",3).defaultTo("1");

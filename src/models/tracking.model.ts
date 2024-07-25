@@ -63,7 +63,9 @@ const createTrackingQrData =  async (knexConnection: any, cartonQrs : number[] |
         let cartonParentQrs = [];
 
         if( cartonQrs.length  > 0 ){
-            const res = await knexConnection.select("id" , "pqr_id" ).from(TableNames.qr).whereIn("pqr_id",cartonQrs);
+            const res = await knexConnection.select("id" , "pqr_id" ).from(TableNames.qr).whereIn("pqr_id",cartonQrs).where("qr_type",'2');
+
+
 
             cartonParentQrs = res;
 
@@ -109,7 +111,7 @@ interface QrsType {
     qr_type : string;
 }
 
-const createTracking = async (knexConnection: any, trackingType : string , qrs :QrsType[] , extraData :ExtraDataType ,result : any ) => {
+const createTracking = async (knexConnection: any, trackingType : string , qrs :QrsType[] , extraData :ExtraDataType ) => {
 	try {
         let cartonqrs = [];
         let parentAndChildQrs = [];
@@ -153,7 +155,7 @@ const createTracking = async (knexConnection: any, trackingType : string , qrs :
             .returning('id');
 
           });
-
+          
           return {
             success : true,
             data : qrsLoactionsData
