@@ -50,12 +50,12 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
 		}
 
-		return await Checkin.create(tenantKnexConnection,checkinData,async(checkoutInsertError: Error, checkoutInsertData: any)=>{
-			if(checkoutInsertError){
-				return await sendErrorResponse(500, "some error occurred ", checkoutInsertData, res);
+		return await Checkin.create(tenantKnexConnection,checkinData,async(CheckinInsertError: Error, CheckinInsertData: any)=>{
+			if(CheckinInsertError){
+				return await sendErrorResponse(500, "some error occurred ", CheckinInsertData, res);
 			}else{
 				const extraData = {
-					batch_id: checkoutInsertData.id,
+					batch_id: CheckinInsertData.id,
 					user_id: userId,
 					user_name: userName,
 					location_id : locationId,
@@ -65,7 +65,7 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 				const createTrackingResp =  await createTracking(tenantKnexConnection,trackingType,resQrsIds,extraData);
 
 				if(!createTrackingResp.success){
-					Checkin.deleteCheckin(tenantKnexConnection,checkoutInsertData.id);
+					Checkin.deleteCheckin(tenantKnexConnection,CheckinInsertData.id);
 				}
 
 				return await sendResponse(true, 200, "Checkout successfully ", {
