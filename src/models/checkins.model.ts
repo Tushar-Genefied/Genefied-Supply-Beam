@@ -5,13 +5,10 @@ type checkinType = {
     user_role_id: number;
     user_id: number;
     user_name: string;
-    ref: string;
     total_count: number;
+    ref: string;
     remarks?: string;
-	picklist_no?:string;
-    order_no ?: string;
-    status : string;
-    invoice_no?:string;
+
 };
 
 const Checkin = function (this: checkinType, checkinData: checkinType) {
@@ -21,11 +18,7 @@ const Checkin = function (this: checkinType, checkinData: checkinType) {
 	this.user_name = checkinData.user_name;
 	this.ref = checkinData.ref;
 	this.total_count = checkinData.total_count;
-    this.picklist_no=checkinData.picklist_no;
-    this.order_no = checkinData.order_no;
-    this.invoice_no = checkinData.invoice_no;
 	this.remarks = checkinData.remarks;
-	this.status = checkinData.status;
 
 };
 
@@ -39,6 +32,14 @@ Checkin.create = async (knexConnection: any, newCheckin: checkinType, result: an
 	} catch (error) {
 		console.error("Error at Add Checkin in model ", error);
 		result(true, error);
+	}
+};
+
+Checkin.deleteCheckin = async (knexConnection: any, id: any ) => {
+	try {
+		const res = await knexConnection.from(TableNames.checkIns).del().where({ id });
+	} catch (error) {
+		console.error("Error at Add Checkin in model ", error);
 	}
 };
 

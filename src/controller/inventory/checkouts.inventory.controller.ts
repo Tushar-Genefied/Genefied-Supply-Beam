@@ -17,7 +17,7 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 		const remarks = req.body.remarks;
 		const bill = req.body.bill;
 		const shipTo = req.body.ship_to;
-		const trackingType = '2';
+		const trackingType = 'OUT';
 		const qrs = req.body.qrs;
 		
 		const resQrsIds = await QR.getQrIdAndType(tenantKnexConnection ,qrs );

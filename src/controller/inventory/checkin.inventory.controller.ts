@@ -1,3 +1,7 @@
+import Checkin from "../../models/checkins.model";
+import QR from "../../models/qr.model";
+import SupplyBeamSiteLocations from "../../models/supplyBeamSiteLocations.model";
+import { createTracking } from "../../models/tracking.model";
 import { getConnectionBySlug } from "../../utils/connectionManager";
 import { sendErrorResponse, sendResponse } from "../../utils/utils";
 
@@ -8,6 +12,67 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 		if (!req.body || !req.body.qrs )   {
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
+
+		const { id : userId , location_id : locationId , user_role_id : userRoleId , name : userName } =  req.user;
+		const remarks = req.body.remarks;
+		const trackingType = 'IN';
+		const qrs = req.body.qrs;
+		
+		const resQrsIds = await QR.getQrIdAndType(tenantKnexConnection ,qrs );
+
+		if( resQrsIds.length == 0){
+			return await sendResponse(false, 409, "No Such Qr Code Exists ", null, res);
+		}
+		let getOutcodeAndOutcodetypeRes=[];
+		// location id != zero then scan is done by supply users , outcode is location_code
+		// location id == zero then scan is done by app users , outcode is app_user_id 
+		if( locationId != 0){
+			
+			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
+
+			if( getOutcodeAndOutcodetypeRes.length == 0 ){
+				return await sendResponse(false, 409, "This ", null, res);
+			}
+		}
+
+		const epoch = Date.now();
+		const refNo =  "IN-"+epoch;
+
+        const checkinData  = {
+			location_id : locationId ,
+			user_role_id : userRoleId,
+			user_id : userId,
+			user_name : userName,
+			total_count : resQrsIds.length,
+			remarks : remarks ? remarks : null,
+			ref :refNo,
+			out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
+			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
+		}
+
+		return await Checkin.create(tenantKnexConnection,checkinData,async(checkoutInsertError: Error, checkoutInsertData: any)=>{
+			if(checkoutInsertError){
+				return await sendErrorResponse(500, "some error occurred ", checkoutInsertData, res);
+			}else{
+				const extraData = {
+					batch_id: checkoutInsertData.id,
+					user_id: userId,
+					user_name: userName,
+					location_id : locationId,
+					user_role_id : userRoleId
+		        };
+
+				const createTrackingResp =  await createTracking(tenantKnexConnection,trackingType,resQrsIds,extraData);
+
+				if(!createTrackingResp.success){
+					Checkin.deleteCheckin(tenantKnexConnection,checkoutInsertData.id);
+				}
+
+				return await sendResponse(true, 200, "Checkout successfully ", {
+					ref : refNo 
+				}, res);
+			}
+		});
 
         
 
