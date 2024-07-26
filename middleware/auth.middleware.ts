@@ -30,7 +30,7 @@ export const protectSupplyBeam = async (
 			const decoded = JWT.verify(token, serverConfig.access_token_secrect);
 			req.user = decoded;
 			
-			checkUserActive = await SBUser.checkPresent(tenantKnexConnection,req.user.id);
+			checkUserActive = await SBUser.checkPresent(tenantKnexConnection,req.user.employee_id);
 			
 
 			if (!checkUserActive) {
@@ -46,4 +46,23 @@ export const protectSupplyBeam = async (
 		console.error("Token is missing");
 		await sendErrorResponse(401, "Token is missing", null, res);
 	}
+};
+
+
+
+export const checkForSlug = async (
+	req: any | Request,
+	res: any | Response,
+	next: NextFunction,
+) => {
+	try{
+		let token;
+	if (!req.headers.slug || req.headers.slug.length == 0) {
+		return await sendErrorResponse(401, "please provide slug", null, res);
+	}
+	next();
+	}catch(error : any){
+		console.error("something went wrong",error);
+		return await sendErrorResponse(500, "something went wrong", null, res);
+	}	
 };

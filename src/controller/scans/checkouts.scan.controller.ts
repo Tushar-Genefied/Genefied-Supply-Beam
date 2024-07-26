@@ -14,7 +14,8 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
 		const uniqueCode = req.body.unique_code.trim();
         const qrDetails = req.body.qr_details;
         const qrType   = req.body.qr_details.qr_type.toString();
-        const {id : userId , name : userName , location_id : currentLocationId } = req.user;
+        const {id : userId , name : userName , location_id } = req.user;
+        const currentLocationId =location_id ;
         let whereLastLocation :any = {};
 
         whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
@@ -25,7 +26,7 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
 					return await sendErrorResponse(500,  "Something went wrong", lastLocationsData, res);
 				}
 				if (lastLocationsData.length === 0) {
-					return await sendResponse(false, 409, "no location found", lastLocationsData, res);
+					return await sendResponse(false, 409, "no checkin found", lastLocationsData, res);
 				} else {
                     // Last location should be IN 
                     if(lastLocationsData[0].batch_type != 'IN'){

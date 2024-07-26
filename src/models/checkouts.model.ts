@@ -46,5 +46,23 @@ Checkout.deleteCheckout = async (knexConnection: any, id: any ) => {
 	}
 };
 
+Checkout.checkoutValidate = async (knexConnection: any, qrId: any , batchId : any , newLocationOutCode : any ) => {
+	try {
+		const res = await knexConnection.select("id").from(TableNames.checkouts).where({
+			qr_id : qrId,
+			batch_id : batchId,
+			out_code : newLocationOutCode
+		});
+
+		if( res.length > 0){
+			return true;
+		}
+		return false;
+	} catch (error) {
+		console.error("Error at Add Checkout in model ", error);
+		return false;
+	}
+};
+
 
 export default Checkout;

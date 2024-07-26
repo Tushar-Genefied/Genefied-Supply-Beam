@@ -7,9 +7,8 @@ import { verifyQrCodeAtCheckout } from "../../../controller/scans/checkouts.scan
 const express = require("express");
 
 const router = express.Router();
-
-router.route("/checkout-in").get(protectSupplyBeam, basicQrValidation , verifyQrCodeAtCheckout );
-router.route("/checkin-in").get(protectSupplyBeam, basicQrValidation , verifyQrCodeAtCheckin );
+router.route("/checkout").post(protectSupplyBeam, basicQrValidation , verifyQrCodeAtCheckout );
+router.route("/checkin").post(protectSupplyBeam, basicQrValidation , verifyQrCodeAtCheckin );
 
 
 export default router;

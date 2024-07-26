@@ -1,3 +1,4 @@
+import Checkout from "../../models/checkouts.model";
 import QrLocations from "../../models/qrLocations.model";
 import SupplyBeamSiteLocations from "../../models/supplyBeamSiteLocations.model";
 import { getConnectionBySlug } from "../../utils/connectionManager";
@@ -15,10 +16,11 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
 		const uniqueCode = req.body.unique_code.trim();
         const qrDetails = req.body.qr_details;
         const qrType   = req.body.qr_details.qr_type.toString();
-        const {id : userId , name : userName , location_id : currentLocationId } = req.user;
+        const {id : userId , name : userName , location_id  } = req.user;
+        const currentLocationId = location_id[0];
         let whereLastLocation :any = {};
 
-        whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
+        whereLastLocation[qrStatusObject[qrType]]=qrDetails.qr_type;
 
        return await SupplyBeamSiteLocations.findById(tenantKnexConnection,currentLocationId,async(supplyBeamSiteLocationsError: Error, supplyBeamSiteLocationsData: any)=>{
 
@@ -31,7 +33,7 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
                 return await sendErrorResponse(500,  "Something went wrong", lastLocationsData, res);
             }
             if (lastLocationsData.length === 0) {
-                return await sendResponse(true, 200, "qr has been verified and ready to checkout ", qrDetails, res);
+                return await sendResponse(false, 409, "this qr is not valid", {}, res);
             } else {
                 // Last location should be OUT 
                 if(lastLocationsData[0].batch_type != 'OUT'){
@@ -39,10 +41,15 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
                 }
 
                 if( currentLocationId != 0 ){
+
+                    const batchId = lastLocationsData[0].batch_id;
+                    const qrId = qrDetails.id;
                     
-                    // last location should matched with current location
-                    if(  lastLocationsData[0].location_id != supplyBeamSiteLocationsData.location_code ){
-                        return await sendResponse(false, 409, "location of last checkout and current checkin did not matched ", qrDetails, res);
+                    // last location checkout outcode should matched with current location
+
+                    if(  await Checkout.checkoutValidate(tenantKnexConnection, qrId,batchId,supplyBeamSiteLocationsData[0].location_code) )
+                    {
+                        return await sendResponse(false, 409, "This Qr is not checkout to this location", qrDetails, res);
                     }
                 }else{
                      // for user type like distributor or retailer user id should match
