@@ -52,4 +52,19 @@ QrLocations.lastLocations = async (knexConnection: any, whereLastLocation : any,
 	}
 };
 
+QrLocations.isQrAlreadyCheckInOutAtThisLocation = async (knexConnection: any,data :any) => {
+	try {
+		console.log("daa",data);
+		const res = await knexConnection.select("*").from(TableNames.qrLocations).where(data);
+		console.log("objeresct",res);
+		if( res.length > 0 ){
+			return true;
+		}
+		return false;
+	} catch (error) {
+		console.error("Error at Last Locations in model ", error);
+		return true;
+	}
+};
+
 export default QrLocations;

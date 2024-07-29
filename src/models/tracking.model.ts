@@ -10,15 +10,21 @@ interface ExtraDataType {
 
 const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , extraData : ExtraDataType ) => {
 	try {
+        console.log( "getQrTrackInfo  parentAndChildQrs",parentAndChildQrs);
+        
 		const qrtypeList = await knexConnection.select("id" , "qr_type").from(TableNames.qr).whereIn("id",parentAndChildQrs);
-
+        console.log( "getQrTrackInfo  qrtypeList",qrtypeList);
+        
         let qrcodeIdTypeMap : any = {};
         for( let i = 0; i < qrtypeList.length; i++ ){
             const x = qrtypeList[i];
             qrcodeIdTypeMap[x.id] = x.qr_type;
         }   
-		const qrcodeDataList = await knexConnection.select("id as qr_id " , "pqr_id" , "qr_type" ).from(TableNames.qr).whereIn("id",parentAndChildQrs).whereIn("pqr_id",parentAndChildQrs);
+        console.log( "getQrTrackInfo  qrcodeIdTypeMap",qrcodeIdTypeMap);
+        
+		const qrcodeDataList = await knexConnection.select("id as qr_id " , "pqr_id" , "qr_type" ).from(TableNames.qr).whereIn("id", parentAndChildQrs).orWhereIn("pqr_id", parentAndChildQrs);
 
+        console.log("qrcodeDataList",qrcodeDataList);
         let finalQrData : any = [];
         for( let i=0 ;i < qrcodeDataList.length ;i++ ){
             const x = qrcodeDataList[i];
@@ -28,8 +34,8 @@ const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , ext
             if( qrcodeIdTypeMap.hasOwnProperty(x.qr_id)  && qrcodeIdTypeMap[x.qr_id] == '1' ){
                 finalQrData.push({
                     qr_id : x.qr_id,
-                    pqr_id : x.pqr_id,
-                    cqr_id : x.cqr_id,
+                    pqr_id : x.pqr_id ? x.pqr_id : 0,
+                    cqr_id : x.cqr_id ? x.cqr_id : 0,
                     qr_type : x.qr_type,
                     user_id : extraData.user_id,
                     user_name : extraData.user_name,
@@ -40,9 +46,9 @@ const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , ext
             // because we must have got these child qr from second query .
             else if (  !qrcodeIdTypeMap.hasOwnProperty(x.qr_id) ){
                 finalQrData.push({
-                    qr_id : x.qr_id,
-                    pqr_id : x.pqr_id,
-                    cqr_id : x.cqr_id,
+                    qr_id : x.qr_id ? x.pqr_id : 0 ,
+                    pqr_id : x.pqr_id ? x.pqr_id : 0,
+                    cqr_id : x.cqr_id ? x.cqr_id : 0,
                     qr_type : "2",
                     user_id : extraData.user_id,
                     user_name : extraData.user_name,
@@ -50,6 +56,8 @@ const getQrTrackInfo = async (knexConnection: any, parentAndChildQrs : any , ext
                 })
             }
         }
+
+        console.log("finalQrData",finalQrData);
 
         return finalQrData;
 
@@ -124,9 +132,11 @@ const createTracking = async (knexConnection: any, trackingType : string , qrs :
                 parentAndChildQrs.push(Number(qrs[i].id));
             }
         }
-
+        console.log(cartonqrs);
+        console.log(parentAndChildQrs);
+        console.log(extraData);
         const trackingQrsData = await createTrackingQrData(knexConnection , cartonqrs, parentAndChildQrs , extraData);
-
+        console.log("trackingQrsData",trackingQrsData);
         let tableName = "";
 
         if( trackingType == 'IN'){
@@ -147,13 +157,14 @@ const createTracking = async (knexConnection: any, trackingType : string , qrs :
                 const x = trackingQrsData[i];
                 qrsLoactionsData.push({
                     ...x,
-                    location_id : x.location_id,
-                    user_role_id : x.user_role_id,
+                    location_id : extraData.location_id,
+                    user_role_id : extraData.user_role_id,
+                    batch_type : trackingType
                 })
             }
-
+            console.log("qrsLoactionsData",qrsLoactionsData);
             const qrsLocationsInsert = await trx(TableNames.qrLocations)
-            .insert(trackingQrsData)
+            .insert(qrsLoactionsData)
             .returning('id');
 
           });

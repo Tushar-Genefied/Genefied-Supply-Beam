@@ -22,6 +22,20 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
 
         whereLastLocation[qrStatusObject[qrType]]=qrDetails.qr_type;
 
+        const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
+            location_id : currentLocationId,
+            [qrStatusObject[qrType]] : qrDetails.id,
+            batch_type : 'IN'
+        })
+
+        console.log("isAlreadyScanned",isAlreadyScanned);
+
+        // at current location , is this qr already checked in 
+        if( isAlreadyScanned){
+            return await sendResponse(false, 409, "This Qrs is already check in at this location ", {}, res);
+        }
+
+
        return await SupplyBeamSiteLocations.findById(tenantKnexConnection,currentLocationId,async(supplyBeamSiteLocationsError: Error, supplyBeamSiteLocationsData: any)=>{
 
         if (supplyBeamSiteLocationsError) {
@@ -45,11 +59,11 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
                     const batchId = lastLocationsData[0].batch_id;
                     const qrId = qrDetails.id;
                     
-                    // last location checkout outcode should matched with current location
-
-                    if(  await Checkout.checkoutValidate(tenantKnexConnection, qrId,batchId,supplyBeamSiteLocationsData[0].location_code) )
+                    // last location checkout outcode should matched with current location , location_code
+                    console.log("supplyBeamSiteLocationsData",supplyBeamSiteLocationsData);
+                    if(  await Checkout.checkoutValidate(tenantKnexConnection,batchId,supplyBeamSiteLocationsData[0].location_code) )
                     {
-                        return await sendResponse(false, 409, "This Qr is not checkout to this location", qrDetails, res);
+                        return await sendResponse(false, 409, "This Qr is not checkout from last location", qrDetails, res);
                     }
                 }else{
                      // for user type like distributor or retailer user id should match

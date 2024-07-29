@@ -20,6 +20,19 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
 
         whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
 
+
+        const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
+            location_id : currentLocationId,
+            [qrStatusObject[qrType]] : qrDetails.id,
+            batch_type : 'OUT'
+        })
+
+        // at current location , is this qr already checked out
+        if( isAlreadyScanned){
+            return await sendResponse(false, 409, "This Qrs is already check out at this location ", {}, res);
+        }
+
+
 			// last location
 			return await QrLocations.lastLocations(tenantKnexConnection, whereLastLocation, async (lastLocationsError: Error, lastLocationsData: any) => {
 				if (lastLocationsError) {

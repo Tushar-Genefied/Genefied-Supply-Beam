@@ -35,7 +35,7 @@ SupplyBeamSiteLocations.findById = async (knexConnection: any, location_id: any,
         .from(TableNames.supplyBeamLocations)
         .where("supply_beam_locations.id", location_id);
   
-      result(false, res[0]);
+      result(false, res);
     } catch (error) {
       console.error("Error in SupplyBeamSiteLocations.findById: ", error);
       result(true, error);

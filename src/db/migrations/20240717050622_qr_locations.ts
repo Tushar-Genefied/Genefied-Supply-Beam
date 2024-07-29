@@ -6,9 +6,9 @@ export async function up(knex: Knex): Promise<void> {
 		table.increments("id").primary(); // Primary key
 		table.integer("batch_id").notNullable(); // Checkin Id/Checkout Id
         table.string("batch_type").notNullable(); // Checkin Id/Checkout Id
-		table.integer("qr_id")
-		table.integer("pqr_id")
-		table.integer("cqr_id")
+		table.integer("qr_id").notNullable().defaultTo(0);
+		table.integer("pqr_id").notNullable().defaultTo(0);
+		table.integer("cqr_id").notNullable().defaultTo(0);
 		table.string("qr_type").notNullable().defaultTo(1); // QR Type
         table.integer("location_id").notNullable().defaultTo(0); // Adds a non-nullable integer column for location ID
 		table.integer("user_role_id").notNullable(); // Adds a non-nullable integer column for user role ID

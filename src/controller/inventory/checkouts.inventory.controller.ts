@@ -8,12 +8,14 @@ import { sendErrorResponse, sendResponse } from "../../utils/utils";
 export const checkoutInventory = async (req: Request | any, res: Response | any) => {
 	try {
 		const tenantKnexConnection = getConnectionBySlug(req.headers.slug);
-        
+        console.log("req.body.qrs",req.body);
 		if (!req.body || !req.body.qrs || req.body.qrs.length == 0)   {
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
 
-		const { id : userId , location_id : locationId , user_role_id : userRoleId , name : userName } =  req.user;
+		const { id : userId , location_id, name : userName } =  req.user;
+		const userRoleId = req.user.role_id ? req.user.role_id : req.user.user_type_id;
+		const locationId=location_id[0];
 		const remarks = req.body.remarks;
 		const bill = req.body.bill;
 		const shipTo = req.body.ship_to;
@@ -33,7 +35,7 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
 
 			if( getOutcodeAndOutcodetypeRes.length == 0 ){
-				return await sendResponse(false, 409, "This ", null, res);
+				return await sendResponse(false, 409, "This location does not exist", null, res);
 			}
 		}
 
@@ -48,12 +50,12 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 			total_count : resQrsIds.length,
 			remarks : remarks ? remarks : null,
 			ship_to : shipTo ? shipTo : null,
-			bill_to : bill ? bill : null,
+			bill : bill ? bill : null,
 			ref :refNo,
 			out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
 			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
 		}
-
+		// console.log("checkoutData",checkoutData);
 		return await Checkout.create(tenantKnexConnection,checkoutData,async(checkoutInsertError: Error, checkoutInsertData: any)=>{
 			if(checkoutInsertError){
 				return await sendErrorResponse(500, "some error occurred ", checkoutInsertData, res);
@@ -69,7 +71,8 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 				const createTrackingResp =  await createTracking(tenantKnexConnection,trackingType,resQrsIds,extraData);
 
 				if(!createTrackingResp.success){
-					Checkout.deleteCheckout(tenantKnexConnection,checkoutInsertData.id);
+					await Checkout.deleteCheckout(tenantKnexConnection,checkoutInsertData.id);
+					return await sendErrorResponse(500, "some error occurred ", checkoutInsertData, res);
 				}
 
 				return await sendResponse(true, 200, "Checkout successfully ", {

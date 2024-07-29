@@ -13,7 +13,9 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
 
-		const { id : userId , location_id : locationId , user_role_id : userRoleId , name : userName } =  req.user;
+		const { id : userId , location_id  , name : userName } =  req.user;
+		const userRoleId = req.user.role_id ? req.user.role_id : req.user.user_type_id;
+		const locationId = location_id[0];
 		const remarks = req.body.remarks;
 		const trackingType = 'IN';
 		const qrs = req.body.qrs;
@@ -31,7 +33,7 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
 
 			if( getOutcodeAndOutcodetypeRes.length == 0 ){
-				return await sendResponse(false, 409, "This ", null, res);
+				return await sendResponse(false, 409, "This location does not exist ", null, res);
 			}
 		}
 
@@ -46,8 +48,8 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 			total_count : resQrsIds.length,
 			remarks : remarks ? remarks : null,
 			ref :refNo,
-			out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
-			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
+			// out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
+			// out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
 		}
 
 		return await Checkin.create(tenantKnexConnection,checkinData,async(CheckinInsertError: Error, CheckinInsertData: any)=>{
@@ -66,6 +68,7 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 
 				if(!createTrackingResp.success){
 					Checkin.deleteCheckin(tenantKnexConnection,CheckinInsertData.id);
+					return await sendErrorResponse(500, "some error occurred ", CheckinInsertData, res);
 				}
 
 				return await sendResponse(true, 200, "Checkout successfully ", {
