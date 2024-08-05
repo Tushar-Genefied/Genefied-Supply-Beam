@@ -21,17 +21,6 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
         whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
 
 
-        const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
-            location_id : currentLocationId,
-            [qrStatusObject[qrType]] : qrDetails.id,
-            batch_type : 'OUT'
-        })
-
-        // at current location , is this qr already checked out
-        if( isAlreadyScanned){
-            return await sendResponse(false, 409, "This Qrs is already check out at this location ", {}, res);
-        }
-
 
 			// last location
 			return await QrLocations.lastLocations(tenantKnexConnection, whereLastLocation, async (lastLocationsError: Error, lastLocationsData: any) => {
@@ -43,20 +32,31 @@ export const verifyQrCodeAtCheckout = async (req: Request | any, res: Response |
 				} else {
                     // Last location should be IN 
                     if(lastLocationsData[0].batch_type != 'IN'){
-                        return await sendResponse(false, 409, "You can not checkout before checkout in ", lastLocationsData, res);
+                        return await sendResponse(false, 409, "You can not checkout before checkout in ", {}, res);
                     }
 
                     if( currentLocationId != 0 ){
                         
                         // last location should matched with current location
                         if(  lastLocationsData[0].location_id != currentLocationId  ){
-                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", qrDetails, res);
+                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", {}, res);
                         }
                     }else{
                          // for user type like distributor or retailer user id should match
                         if(  lastLocationsData[0].user_id != userId  ){
-                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", qrDetails, res);
+                            return await sendResponse(false, 409, "location of last check in and current checkout did not matched ", {}, res);
                         }
+                    }
+
+                    const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
+                        location_id : currentLocationId[0],
+                        [qrStatusObject[qrType]] : qrDetails.id,
+                        batch_type : 'OUT'
+                    })
+            
+                    // at current location , is this qr already checked out
+                    if( isAlreadyScanned){
+                        return await sendResponse(false, 409, "This Qrs is already check out at this location ", {}, res);
                     }
 
                     return await sendResponse(true, 200, "qr has been verified and ready to checkout ", qrDetails, res);

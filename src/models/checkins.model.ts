@@ -43,4 +43,7 @@ Checkin.deleteCheckin = async (knexConnection: any, id: any ) => {
 	}
 };
 
+
+
+
 export default Checkin;

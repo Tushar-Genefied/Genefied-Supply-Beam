@@ -22,19 +22,6 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
 
         whereLastLocation[qrStatusObject[qrType]]=qrDetails.qr_type;
 
-        const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
-            location_id : currentLocationId,
-            [qrStatusObject[qrType]] : qrDetails.id,
-            batch_type : 'IN'
-        })
-
-        console.log("isAlreadyScanned",isAlreadyScanned);
-
-        // at current location , is this qr already checked in 
-        if( isAlreadyScanned){
-            return await sendResponse(false, 409, "This Qrs is already check in at this location ", {}, res);
-        }
-
 
        return await SupplyBeamSiteLocations.findById(tenantKnexConnection,currentLocationId,async(supplyBeamSiteLocationsError: Error, supplyBeamSiteLocationsData: any)=>{
 
@@ -53,6 +40,18 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
                 if(lastLocationsData[0].batch_type != 'OUT'){
                     return await sendResponse(false, 409, "You can not checkin before checkout", lastLocationsData, res);
                 }
+
+                const isAlreadyScanned = await QrLocations.isQrAlreadyCheckInOutAtThisLocation(tenantKnexConnection,{
+                    location_id : currentLocationId[0],
+                    [qrStatusObject[qrType]] : qrDetails.id,
+                    batch_type : 'IN'
+                })
+        
+                // at current location , is this qr already checked in 
+                if( isAlreadyScanned){
+                    return await sendResponse(false, 409, "This Qrs is already check in at this location ", {}, res);
+                }
+        
 
                 if( currentLocationId != 0 ){
 
