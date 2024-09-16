@@ -7,4 +7,9 @@ export const TableNames = {
 	supplyBeamLocations:"supply_beam_locations",
 	qr :"qr",
 	returningQrs :"returning_qrs",
+	pickLists :"pick_lists",
+	pickListItems :"picklist_items",
+	pickListQrCodes :"picklist_qrcodes",
+	orders :"orders",
+	orderItems :"order_items",
 };

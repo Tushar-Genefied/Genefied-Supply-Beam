@@ -43,6 +43,24 @@ QR.getQrByUniqueCode = async (
   return;
 };
 
+QR.getQrIdAndProductCode = async (
+  knexConnection: any,
+  qrs: number[],
+) => {
+  try {
+
+    const res: any = await knexConnection
+      .select("id", "product_code")
+      .from("qr")
+      .whereIn("id", qrs);
+
+    return res;
+  } catch (error) {
+    console.error("Error at get qr by unique code in model ", error);
+    return [];
+  }
+  return;
+};
 QR.getQrIdAndType = async (
   knexConnection: any,
   qrs: number[],
@@ -61,5 +79,6 @@ QR.getQrIdAndType = async (
   }
   return;
 };
+
 
 export default QR;

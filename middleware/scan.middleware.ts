@@ -8,7 +8,7 @@ export const basicQrValidation = async (req: Request | any, res: Response | any 
 		const tenantKnexConnection = getConnectionBySlug(req.headers.slug);
         
 		if (!req.body || !req.body.unique_code) {
-			return await sendResponse(false, 400, "Bad Request", null, res);
+			return await sendResponse(false, 400, "Bad Request ", null, res);
 		}
         
 		const uniqueCode = req.body.unique_code.trim();

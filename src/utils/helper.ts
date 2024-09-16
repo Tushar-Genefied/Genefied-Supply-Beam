@@ -33,3 +33,14 @@ export const trackingTypesObject : any= {
     '2' : 'OUT',
     '3' : 'RETURN'
 }
+
+export const DMSStatus : any= {
+	'0' : "DELETED",
+    '1' : 'PENDING',
+    '2' : 'REJECT',
+    '3' : 'INPROGESS',
+    '4' : 'PARTIALLY DISPATCH',
+    '5' : 'FULLY DISPATCH',
+    '6' : 'COMPLETE',
+    
+}
