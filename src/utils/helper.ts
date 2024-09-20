@@ -21,6 +21,32 @@ export const getToken = function (data: any) {
 	return jwt.sign(data, token_secret);
 };
 
+export const returnUniqueCode = function (type :string , data : any) {
+    let array = [];
+    try{
+        if( type == 'single'){
+            let uc = data;
+            if( data.includes('http') || data.includes('https')){
+                uc = data.split("?")[1];
+            }
+            array.push(uc);
+        }else{
+            for( let i =0 ;i <data.length ;i++){
+                let uc = data[i];
+                if( data[i].includes('https') || data[i].includes('http') ){
+                    uc=data[i].split("?")[1];
+                }
+                array.push(uc);
+            }
+        }
+        return array;
+
+    }catch(error){
+        console.log("error  return uniqueCode",error);
+        return array;
+    }
+};
+
 export const qrStatusObject : any= {
     '1' : 'qr_id',
     '2' : 'pqr_id',

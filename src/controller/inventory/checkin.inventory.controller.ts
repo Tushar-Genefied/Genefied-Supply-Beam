@@ -3,6 +3,7 @@ import QR from "../../models/qr.model";
 import SupplyBeamSiteLocations from "../../models/supplyBeamSiteLocations.model";
 import { createTracking } from "../../models/tracking.model";
 import { getConnectionBySlug } from "../../utils/connectionManager";
+import { returnUniqueCode } from "../../utils/helper";
 import { sendErrorResponse, sendResponse } from "../../utils/utils";
 
 export const checkinInventory = async (req: Request | any, res: Response | any) => {
@@ -18,7 +19,14 @@ export const checkinInventory = async (req: Request | any, res: Response | any) 
 		const locationId = location_id[0];
 		const remarks = req.body.remarks;
 		const trackingType = 'IN';
-		const qrs = req.body.qrs;
+
+		// parsing unique codes
+		const parsedUniqueCodeArray =  returnUniqueCode('array', req.body.qrs);
+		
+		// return ids from unique code
+		const qrs = await QR.getUniqueCodeAndReturnIds(tenantKnexConnection,parsedUniqueCodeArray);
+	
+		console.log("qrs : ",qrs);
 		
 		const resQrsIds = await QR.getQrIdAndType(tenantKnexConnection ,qrs );
 

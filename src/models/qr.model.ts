@@ -80,5 +80,27 @@ QR.getQrIdAndType = async (
   return;
 };
 
+QR.getUniqueCodeAndReturnIds = async (
+  knexConnection: any,
+  uniqueCodes: string[],
+) => {
+  try {
+
+    const res: any = await knexConnection
+      .select("id")
+      .from("qr")
+      .whereIn("unique_code", uniqueCodes);
+
+    if( res.length > 0){
+       return res.map((x:any)=> x.id);
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Error at get qr ids by unique code in model ", error);
+    return [];
+  }
+};
+
 
 export default QR;

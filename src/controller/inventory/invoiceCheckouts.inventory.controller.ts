@@ -11,7 +11,7 @@ export const invoiceCheckoutInventory = async (req: Request | any, res: Response
 	try {
 		const tenantKnexConnection = getConnectionBySlug(req.headers.slug);
         console.log("req.body.qrs",req.body);
-		if (!req.body || !req.body.picklist_id )   {
+		if (!req.body || !req.body.invoice_no )   {
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
 

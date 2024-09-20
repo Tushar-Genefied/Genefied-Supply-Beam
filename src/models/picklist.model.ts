@@ -81,4 +81,24 @@ Picklists.invoicenoCheckInPickLists = async (knexConnection: any, invoiceNo: num
 	}
 };
 
+Picklists.getPicklistIDByOrderno = async (knexConnection: any, orderNo: number ) => {
+	try {
+		const res = await knexConnection
+			.select("*")
+			.from(TableNames.pickLists)
+            .where({
+                order_no : orderNo,
+				"status" : "3"
+            })
+		if( res.length > 0){
+            return res;
+        }
+        return [];
+	
+	} catch (error) {
+		console.error("Error at get Picklist Id By Order No in model ", error);
+		return [];
+	}
+};
+
 export default Picklists;

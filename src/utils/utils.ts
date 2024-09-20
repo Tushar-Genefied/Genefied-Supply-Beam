@@ -20,7 +20,7 @@ export async function sendResponse(
 		status : statusCode,
 		success : success,
 		message : msg,
-		body : body,
+		data : body,
 	};
     
 
@@ -45,7 +45,7 @@ export async function sendErrorResponse(
 	const responseObject = {
 		success : false,
 		message : msg,
-		Error : error,
+		error : error,
 	};
 
 	res.status(statusCode).send(responseObject);  

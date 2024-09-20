@@ -47,6 +47,23 @@ PicklistsItems.checkForProductNoInPickListItems = async (knexConnection: any, pi
 	}
 };
 
+PicklistsItems.getPickItemsByPickListId = async (knexConnection: any, picklistId: number ) => {
+	try {
+		const res = await knexConnection.select("product_code","qty","picked_qty").from(TableNames.pickListItems).where({
+            picklist_id : picklistId,
+        })
+
+        if( res.length > 0){
+            return res;
+        }
+        return res;
+	} catch (error) {
+		console.error("Error at check for already exist PickList Qrcodes in model ", error);
+        return [];
+	}
+};
+
+
 
 
 export default PicklistsItems;

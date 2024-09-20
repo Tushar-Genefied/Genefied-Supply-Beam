@@ -57,6 +57,26 @@ Orders.checkOrderIDAlreadyPresent = async (knexConnection: any, orderID: number 
 		console.error("Error at order ID already exist check in model ", error);
 		return false;
 	}
+
+};
+
+Orders.getOrderDetailsByOrderNO = async (knexConnection: any, orderNo: number ) => {
+	try {
+		const res = await knexConnection
+			.select("*")
+			.from(TableNames.orders)
+            .where({
+                order_no : orderNo
+            });
+		if( res.length > 0){
+            return res;
+        }
+        return res;
+	
+	} catch (error) {
+		console.error("Error at order ID already exist check in model ", error);
+		return [];
+	}
 };
 
 

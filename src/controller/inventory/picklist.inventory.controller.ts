@@ -3,6 +3,7 @@ import Orders from "../../models/orders.model";
 import Picklists from "../../models/picklist.model";
 import QR from "../../models/qr.model";
 import { getConnectionBySlug } from "../../utils/connectionManager";
+import { returnUniqueCode } from "../../utils/helper";
 import { sendErrorResponse, sendResponse } from "../../utils/utils";
 
 export const picklistInventory = async (req: Request | any, res: Response | any) => {
@@ -22,8 +23,11 @@ export const picklistInventory = async (req: Request | any, res: Response | any)
 		const userRoleId = req.user.role_id ? req.user.rolex_id : req.user.user_type_id;
 		const locationId = location_id[0];
 		const remarks = req.body.remarks;
-		const qrs = req.body.qrs;
 
+        const parsedUniqueCodeArray =  returnUniqueCode('array', req.body.qrs);
+		const qrs = await QR.getUniqueCodeAndReturnIds(tenantKnexConnection,parsedUniqueCodeArray);
+	
+		console.log("qrs : ",qrs);
 
         const lastProductCodeDetailsCount :any = {};
 
