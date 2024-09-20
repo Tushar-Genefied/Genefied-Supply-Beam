@@ -29,8 +29,6 @@ SBUser.checkPresent = async (knexConnection: any, employee_id: string) => {
 		// console.log("employee_id we are here", employee_id);
 		const res = await knexConnection.select("*").from("supply_beam_users").where("employee_id", employee_id);
 		// console.log("object", res);
-		console.log(employee_id);
-		console.log(res,"RESPONSE");
 		if (res.length > 0) {
 			return true;
 		}

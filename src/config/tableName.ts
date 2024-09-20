@@ -10,6 +10,6 @@ export const TableNames = {
 	pickLists :"pick_lists",
 	pickListItems :"picklist_items",
 	pickListQrCodes :"picklist_qrcodes",
-	orders :"orders",
+	orders :"orders_sb",
 	orderItems :"order_items",
 };

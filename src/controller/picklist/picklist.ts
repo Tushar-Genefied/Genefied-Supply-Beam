@@ -12,11 +12,11 @@ export const getPicklistItemsDetails = async (req: Request | any, res: Response 
 	try {
 		const tenantKnexConnection = getConnectionBySlug(req.headers.slug);
         
-		if (!req.body || !req.body.order_no)  {
+		if (!req.params || !req.params.order_no)  {
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
 		
-        const orderNo = req.body.order_no;
+        const orderNo = req.params.order_no;
 
         // validate Order no and get order details
         const orderDetails = await Orders.getOrderDetailsByOrderNO(tenantKnexConnection,orderNo);
