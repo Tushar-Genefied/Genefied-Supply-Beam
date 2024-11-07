@@ -35,16 +35,19 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 			return await sendResponse(false, 409, "No Such Qr Code Exists ", null, res);
 		}
 		let getOutcodeAndOutcodetypeRes=[];
+
+		// out_code is location code / user_id to where this order is going so below is wrong
+
 		// location id != zero then scan is done by supply users , outcode is location_code
 		// location id == zero then scan is done by app users , outcode is app_user_id 
-		if( locationId != 0){
+		// if( locationId != 0){
 			
-			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
+		// 	getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
 
-			if( getOutcodeAndOutcodetypeRes.length == 0 ){
-				return await sendResponse(false, 409, "This location does not exist", null, res);
-			}
-		}
+		// 	if( getOutcodeAndOutcodetypeRes.length == 0 ){
+		// 		return await sendResponse(false, 409, "This location does not exist", null, res);
+		// 	}
+		// }
 
 		const epoch = Date.now();
 		const refNo =  "OUT-"+epoch;
@@ -59,10 +62,10 @@ export const checkoutInventory = async (req: Request | any, res: Response | any)
 			ship_to : shipTo ? shipTo : null,
 			bill : bill ? bill : null,
 			ref :refNo,
-			out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
-			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
+			// out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
+			// out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId
 		}
-		// console.log("checkoutData",checkoutData);
+		console.log("checkoutData",checkoutData);
 		return await Checkout.create(tenantKnexConnection,checkoutData,async(checkoutInsertError: Error, checkoutInsertData: any)=>{
 			if(checkoutInsertError){
 				return await sendErrorResponse(500, "some error occurred ", checkoutInsertData, res);

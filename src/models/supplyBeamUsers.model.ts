@@ -91,7 +91,6 @@ SBUser.updateLoginTime = async (knexConnection: any, employeeId : string , last_
 		console.error("Error at Update Login Time By Email in model ", error);
 		return false;
 	}
-	return;
 };
 
 SBUser.updateById = async (knexConnection: any, user_id: number, details: any, result: any) => {

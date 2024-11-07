@@ -44,7 +44,7 @@ QrLocations.create = async (knexConnection: any, newQrLocations: qrLocationType,
 QrLocations.lastLocations = async (knexConnection: any, whereLastLocation : any, result: any) => {
 	try {
 		const res = await knexConnection.select("*").from(TableNames.qrLocations).where(whereLastLocation).orderBy("created_at","desc").limit(1);
-
+		console.log("last locations",res);
 		result(false,res);
 	} catch (error) {
 		console.error("Error at Last Locations in model ", error);

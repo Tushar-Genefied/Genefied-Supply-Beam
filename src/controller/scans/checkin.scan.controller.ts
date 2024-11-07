@@ -12,7 +12,7 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
 		if (!req.body || !req.body.unique_code || !req.body.qr_details)  {
 			return await sendResponse(false, 400, "Bad Request", null, res);
 		}
-        
+        console.log("req.body",req.body);
 		const uniqueCode = req.body.unique_code.trim();
         const qrDetails = req.body.qr_details;
         const qrType   = req.body.qr_details.qr_type.toString();
@@ -20,8 +20,8 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
         const currentLocationId = location_id[0];
         let whereLastLocation :any = {};
 
-        whereLastLocation[qrStatusObject[qrType]]=qrDetails.qr_type;
-
+        whereLastLocation[qrStatusObject[qrType]]=qrDetails.id;
+        console.log("whereLastLocation",whereLastLocation);
 
        return await SupplyBeamSiteLocations.findById(tenantKnexConnection,currentLocationId,async(supplyBeamSiteLocationsError: Error, supplyBeamSiteLocationsData: any)=>{
 
@@ -60,6 +60,7 @@ export const verifyQrCodeAtCheckin = async (req: Request | any, res: Response | 
                     
                     // last location checkout outcode should matched with current location , location_code
                     console.log("supplyBeamSiteLocationsData",supplyBeamSiteLocationsData);
+                    console.log("batchid",batchId);
                     if(  await Checkout.checkoutValidate(tenantKnexConnection,batchId,supplyBeamSiteLocationsData[0].location_code) )
                     {
                         return await sendResponse(false, 409, "This Qr is not checkout from last location", qrDetails, res);

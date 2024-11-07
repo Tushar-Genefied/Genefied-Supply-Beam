@@ -53,6 +53,8 @@ Checkout.checkoutValidate = async (knexConnection: any, batchId : any , newLocat
 			out_code : newLocationOutCode
 		});
 
+		console.log("checkoutValidate : ",res);
+
 		if( res.length > 0){
 			return true;
 		}

@@ -30,8 +30,12 @@ export const basicQrValidation = async (req: Request | any, res: Response | any 
 			if (data === undefined) {
 				return await sendResponse(true, 200, "Not Found, This QR is not activated yet", null, res);
 			}    
+			console.log("data",data);
 			req.body.qr_details = data;
 			req.body.unique_code = uniqueCode;
+
+			
+
             next();
 		});
         

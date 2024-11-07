@@ -41,16 +41,17 @@ export const picklistCheckoutInventory = async (req: Request | any, res: Respons
 			return await sendResponse(false, 409, "No Such Qr Code Exists ", null, res);
 		}
 		let getOutcodeAndOutcodetypeRes=[];
+		// out_code is location code / user_id to where this order is going so below is wrong
 		// location id != zero then scan is done by supply users , outcode is location_code
 		// location id == zero then scan is done by app users , outcode is app_user_id 
-		if( locationId != 0){
+		// if( locationId != 0){
 			
-			getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
+		// 	getOutcodeAndOutcodetypeRes  =  await SupplyBeamSiteLocations.getOutcodeAndOutcodetype(tenantKnexConnection,Number(locationId));
 
-			if( getOutcodeAndOutcodetypeRes.length == 0 ){
-				return await sendResponse(false, 409, "This location does not exist", null, res);
-			}
-		}
+		// 	if( getOutcodeAndOutcodetypeRes.length == 0 ){
+		// 		return await sendResponse(false, 409, "This location does not exist", null, res);
+		// 	}
+		// }
 
 		const epoch = Date.now();
 		const refNo =  "OUT-"+epoch;
@@ -65,8 +66,9 @@ export const picklistCheckoutInventory = async (req: Request | any, res: Respons
 			ship_to : shipTo ? shipTo : null,
 			bill : bill ? bill : null,
 			ref :refNo,
-			out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
-			out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId,
+			// you need to find out_code from order table and insert it here 
+			// out_code : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_code : userId,
+			// out_user_type : locationId != 0 ? getOutcodeAndOutcodetypeRes[0].location_type_id : userRoleId,
             picklist_id : picklistId
 		}
 		// console.log("checkoutData",checkoutData);
